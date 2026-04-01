@@ -44,16 +44,22 @@ See [COST-GUIDE.md](COST-GUIDE.md) for per-service pricing and how to minimize s
 
 ```mermaid
 graph TB
-    subgraph "MLOps Track - Azure Machine Learning"
+    subgraph CICD["CI/CD Layer"]
+        GH[GitHub Actions]
+        SP[Service Principal]
+        GH --> SP
+    end
+
+    subgraph MLOPS["MLOps Track - Azure ML Resource Group"]
         WS[ML Workspace]
         CI[Compute Instance]
         CC[Compute Cluster]
         DA[Data Assets]
         EXP[Experiments & Jobs]
         PIPE[Pipelines]
+        REG[ML Registry]
         EP[Managed Endpoints]
         MON[Model Monitoring]
-        REG[ML Registry]
 
         WS --> CI & CC
         DA --> EXP
@@ -64,14 +70,14 @@ graph TB
         EP --> MON
     end
 
-    subgraph "GenAIOps Track - Microsoft Foundry"
+    subgraph GENAI["GenAIOps Track - Foundry Resource Group"]
         HUB[Foundry Hub]
         PROJ[Foundry Project]
         AOAI[Azure OpenAI - GPT-4.1]
         AGT[AI Agents]
         EVAL[Cloud Evaluators]
-        APPINS[Application Insights]
         OTEL[OpenTelemetry Tracing]
+        APPINS[Application Insights]
 
         HUB --> PROJ
         PROJ --> AOAI
@@ -81,12 +87,6 @@ graph TB
         OTEL --> APPINS
     end
 
-    subgraph "CI/CD Layer"
-        GH[GitHub Actions]
-        SP[Service Principal]
-    end
-
-    GH --> SP
     SP --> WS
     SP --> PROJ
 ```
