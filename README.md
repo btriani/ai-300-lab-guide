@@ -4,44 +4,106 @@ Hands-on guide for the Microsoft AI-300: Operationalizing Machine Learning and G
 
 All 13 labs from the official Microsoft Learn curriculum, reorganized into a single linear path with architecture diagrams, cost estimates, and exam tips.
 
+![Learning Path](assets/learning-path.png)
+
 ## Who This Is For
 
 - Preparing for the AI-300 exam
 - Have an Azure subscription (pay-as-you-go is fine)
-- Comfortable with CLI basics
+- Comfortable with CLI basics (each lab explains what you need)
 
 ## Quick Start
 
 1. Clone this repo: `git clone https://github.com/btriani/ai-300-lab-guide.git`
-2. Complete the [prerequisites](prerequisites.md)
+2. Run the prerequisites check: `./scripts/check-prerequisites.sh`
 3. Start with [Lab 01](labs/01-automl-mlflow/workbook.md)
 
 ## Labs
 
 | # | Lab | Track | Est. Cost | Est. Time |
 |---|-----|-------|-----------|-----------|
-| 01 | [AutoML & MLflow](labs/01-automl-mlflow/workbook.md) | MLOps | ~$1-2 | 45 min |
-| 02 | [Sweep Jobs (Hyperparameter Tuning)](labs/02-sweep-jobs/workbook.md) | MLOps | ~$1-2 | 45 min |
-| 03 | [Pipelines & Components](labs/03-pipelines/workbook.md) | MLOps | ~$1-2 | 60 min |
-| 04 | [Managed Online Endpoints](labs/04-endpoints/workbook.md) | MLOps | ~$1-3 | 60 min |
-| 05 | [Responsible AI Dashboard](labs/05-responsible-ai/workbook.md) | MLOps | ~$1-2 | 45 min |
-| 06 | [CI/CD with GitHub Actions](labs/06-cicd/workbook.md) | MLOps | ~$1-2 | 60 min |
-| 07 | [MLOps End-to-End](labs/07-mlops-e2e/workbook.md) | MLOps | ~$1-3 | 90 min |
-| 08 | [Azure AI Foundry Basics](labs/08-foundry-basics/workbook.md) | GenAIOps | <$1 | 30 min |
-| 09 | [Prompt Flow](labs/09-prompt-flow/workbook.md) | GenAIOps | ~$1-2 | 60 min |
-| 10 | [Content Safety & Filters](labs/10-content-safety/workbook.md) | GenAIOps | <$1 | 30 min |
-| 11 | [GenAI CI/CD with azd](labs/11-genai-cicd/workbook.md) | GenAIOps | ~$1-2 | 60 min |
-| 12 | [RAG Evaluation](labs/12-rag-eval/workbook.md) | GenAIOps | ~$1-2 | 60 min |
-| 13 | [GenAIOps End-to-End](labs/13-genaiops-e2e/workbook.md) | GenAIOps | ~$2-4 | 90 min |
+| 01 | [AutoML + MLflow](labs/01-automl-mlflow/workbook.md) | MLOps | ~$1-2 | 30 min |
+| 02 | [Scripts & Command Jobs](labs/02-scripts-command-jobs/workbook.md) | MLOps | ~$0.50 | 15 min |
+| 03 | [Hyperparameter Tuning](labs/03-hyperparameter-tuning/workbook.md) | MLOps | ~$0.50 | 20 min |
+| 04 | [Pipelines](labs/04-pipelines/workbook.md) | MLOps | ~$0.50 | 20 min |
+| 05 | [Plan & Prepare MLOps](labs/05-plan-prepare-mlops/workbook.md) | MLOps | ~$2-4 | 30 min |
+| 06 | [GitHub Actions](labs/06-github-actions/workbook.md) | MLOps | ~$0.50 | 25 min |
+| 07 | [Deploy & Monitor](labs/07-deploy-monitor/workbook.md) | MLOps | ~$2-5 | 45 min |
+| 08 | [Foundry Setup](labs/08-foundry-setup/workbook.md) | GenAIOps | ~$1-2 | 20 min |
+| 09 | [Prompt Versioning](labs/09-prompt-versioning/workbook.md) | GenAIOps | ~$0.50 | 30 min |
+| 10 | [Prompt Optimization](labs/10-prompt-optimization/workbook.md) | GenAIOps | ~$1-2 | 40 min |
+| 11 | [Automated Evaluation](labs/11-automated-evaluation/workbook.md) | GenAIOps | ~$5-10 | 40 min |
+| 12 | [Monitoring & Tracing](labs/12-monitoring-tracing/workbook.md) | GenAIOps | ~$1-2 | 40 min |
+| 13 | [Fine-Tuning Strategies](labs/13-fine-tuning/workbook.md) | GenAIOps | Free | 15 min |
 
-Labs 01-07 = MLOps track, Labs 08-13 = GenAIOps track.
+**Total estimated cost: ~$15-30** | **Total time: ~6 hours**
 
-**Total estimated cost: ~$15-30** -- see [COST-GUIDE.md](COST-GUIDE.md)
+See [COST-GUIDE.md](COST-GUIDE.md) for per-service pricing and how to minimize spend.
+
+## Architecture Overview
+
+```mermaid
+graph TB
+    subgraph "MLOps Track - Azure Machine Learning"
+        WS[ML Workspace]
+        CI[Compute Instance]
+        CC[Compute Cluster]
+        DA[Data Assets]
+        EXP[Experiments & Jobs]
+        PIPE[Pipelines]
+        EP[Managed Endpoints]
+        MON[Model Monitoring]
+        REG[ML Registry]
+
+        WS --> CI & CC
+        DA --> EXP
+        CC --> EXP
+        EXP --> PIPE
+        PIPE --> REG
+        REG --> EP
+        EP --> MON
+    end
+
+    subgraph "GenAIOps Track - Microsoft Foundry"
+        HUB[Foundry Hub]
+        PROJ[Foundry Project]
+        AOAI[Azure OpenAI - GPT-4.1]
+        AGT[AI Agents]
+        EVAL[Cloud Evaluators]
+        APPINS[Application Insights]
+        OTEL[OpenTelemetry Tracing]
+
+        HUB --> PROJ
+        PROJ --> AOAI
+        AOAI --> AGT
+        AGT --> EVAL
+        AGT --> OTEL
+        OTEL --> APPINS
+    end
+
+    subgraph "CI/CD Layer"
+        GH[GitHub Actions]
+        SP[Service Principal]
+    end
+
+    GH --> SP
+    SP --> WS
+    SP --> PROJ
+```
 
 ## Cheatsheets
 
-- [MLOps Cheatsheet](cheatsheets/mlops-cheatsheet.md) -- CLI commands, key concepts, common patterns
-- [GenAIOps Cheatsheet](cheatsheets/genaiops-cheatsheet.md) -- azd commands, Foundry concepts, evaluation patterns
+- [MLOps Cheatsheet](cheatsheets/mlops-cheatsheet.md) - CLI commands, key concepts, common patterns
+- [GenAIOps Cheatsheet](cheatsheets/genaiops-cheatsheet.md) - azd commands, Foundry concepts, evaluation patterns
+
+## Scripts
+
+| Script | Purpose |
+|--------|---------|
+| `scripts/check-prerequisites.sh` | Verify all tools are installed |
+| `scripts/setup-mlops.sh` | One-command MLOps infrastructure setup |
+| `scripts/setup-genaiops.sh` | One-command GenAIOps infrastructure setup |
+| `scripts/cleanup-all.sh` | Delete all Azure resources when done |
 
 ## Official Microsoft Resources
 
