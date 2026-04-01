@@ -43,48 +43,29 @@ See [COST-GUIDE.md](COST-GUIDE.md) for per-service pricing and how to minimize s
 ## Architecture Overview
 
 ```mermaid
-graph TB
-    subgraph CICD["CI/CD Layer"]
-        GH[GitHub Actions]
-        SP[Service Principal]
-        GH --> SP
+flowchart LR
+    subgraph CICD["CI/CD"]
+        GH[GitHub Actions] --> SP[Service Principal]
     end
 
-    subgraph MLOPS["MLOps Track - Azure ML Resource Group"]
-        WS[ML Workspace]
-        CI[Compute Instance]
-        CC[Compute Cluster]
-        DA[Data Assets]
-        EXP[Experiments & Jobs]
-        PIPE[Pipelines]
-        REG[ML Registry]
-        EP[Managed Endpoints]
-        MON[Model Monitoring]
-
-        WS --> CI & CC
-        DA --> EXP
-        CC --> EXP
-        EXP --> PIPE
-        PIPE --> REG
-        REG --> EP
-        EP --> MON
+    subgraph MLOPS["MLOps Track"]
+        direction TB
+        WS[ML Workspace] --> COMPUTE[Compute\nInstance + Cluster]
+        WS --> DA[Data Assets]
+        COMPUTE --> TRAIN[Experiments\nJobs + Pipelines]
+        DA --> TRAIN
+        TRAIN --> REG[ML Registry]
+        REG --> EP[Managed Endpoints]
+        EP --> MON[Model Monitoring]
     end
 
-    subgraph GENAI["GenAIOps Track - Foundry Resource Group"]
-        HUB[Foundry Hub]
-        PROJ[Foundry Project]
-        AOAI[Azure OpenAI - GPT-4.1]
-        AGT[AI Agents]
-        EVAL[Cloud Evaluators]
-        OTEL[OpenTelemetry Tracing]
-        APPINS[Application Insights]
-
-        HUB --> PROJ
-        PROJ --> AOAI
-        AOAI --> AGT
-        AGT --> EVAL
-        AGT --> OTEL
-        OTEL --> APPINS
+    subgraph GENAI["GenAIOps Track"]
+        direction TB
+        HUB[Foundry Hub] --> PROJ[Foundry Project]
+        PROJ --> AOAI[Azure OpenAI\nGPT-4.1]
+        AOAI --> AGT[AI Agents]
+        AGT --> EVAL[Cloud Evaluators]
+        AGT --> TRACE[OpenTelemetry\nApp Insights]
     end
 
     SP --> WS
