@@ -170,4 +170,4 @@ This also opens a browser window. Use the same account.
 
 ## Next Step
 
-You are ready to go. Start with [Lab 01: AutoML & MLflow](labs/01-automl-mlflow/workbook.md).
+You are ready to go. Start with [Lab 01: AutoML & MLflow](mlops/lab01-automl-mlflow/lab01-automl-mlflow.ipynb).
