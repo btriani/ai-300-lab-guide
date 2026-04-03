@@ -1,0 +1,28 @@
+name: Deploy to production
+on:
+  issue_comment:
+    types: [created]
+jobs:
+  deploy:
+    if: contains(github.event.comment.body, '/deploy-prod')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Install ML extension
+        run: az extension add -n ml
+      - name: Deploy to production endpoint
+        run: |
+          python scripts/deploy_to_online_endpoint.py \
+            --endpoint-name ${{ vars.PROD_ENDPOINT_NAME }} \
+            --deployment-name blue \
+            --model-path ./model \
+            --instance-type Standard_D2as_v4 \
+            --instance-count 1
+        env:
+          AZURE_RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}
+          AZURE_WORKSPACE_NAME: ${{ vars.AZURE_WORKSPACE_NAME }}

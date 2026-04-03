@@ -1,0 +1,19 @@
+name: Train on PR to main
+on:
+  pull_request:
+    branches: [main]
+    paths: ['src/**']
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Submit training job
+        run: |
+          az extension add -n ml
+          az ml job create --file src/job.yml \
+            --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} \
+            --workspace-name ${{ vars.AZURE_WORKSPACE_NAME }}

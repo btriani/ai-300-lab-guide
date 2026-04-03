@@ -1,0 +1,64 @@
+# evaluate-agent.yml
+# Source: Microsoft Learning - mslearn-genaiops
+# Adapted for AI-300 Lab Guide
+# License: MIT
+#
+# GitHub Actions workflow: runs automated evaluation on push to main.
+# Uses OIDC federated credentials (no long-lived secrets).
+
+name: Evaluate Trail-Guide Agent
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "src/api/**"
+      - "data/**"
+  workflow_dispatch:
+
+permissions:
+  id-token: write   # Required for OIDC
+  contents: read
+
+env:
+  AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ env.AZURE_CLIENT_ID }}
+          tenant-id: ${{ env.AZURE_TENANT_ID }}
+          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Load environment variables
+        run: |
+          azd env get-values > .env
+          cat .env >> $GITHUB_ENV
+
+      - name: Run automated evaluation
+        run: python src/evaluators/evaluate_agent.py
+
+      - name: Upload evaluation results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: evaluation-results
+          path: results/
