@@ -6,6 +6,10 @@ All 13 labs from the official Microsoft Learn curriculum, reorganized into runna
 
 > **Attribution:** All lab content is adapted from [Microsoft Learning](https://github.com/MicrosoftLearning). See [ATTRIBUTION.md](ATTRIBUTION.md) for details.
 
+## Architecture Overview
+
+![Architecture Overview](assets/overview-architecture.png)
+
 ## Who This Is For
 
 - Preparing for the AI-300 exam
